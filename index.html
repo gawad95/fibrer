@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fibrer — Comparez les box internet et économisez sur votre abonnement</title>
+  <meta name="description" content="Comparez les meilleures offres box internet en France. Fibre, ADSL, 5G — trouvez l'offre la moins chère pour votre profil en 30 secondes. Gratuit, sans engagement." />
+  <link rel="canonical" href="https://gawad95.github.io/fibrer/" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script>tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } } }</script>
+  <style>
+    body { background: #f8fafc; }
+    .card { background: white; border-radius: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04); }
+    .best-badge { background: linear-gradient(135deg, #06b6d4, #0284c7); }
+    .saving-blue { color: #0284c7; }
+    .range-input { accent-color: #0ea5e9; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+    .fade-in { animation: fadeIn 0.3s ease forwards; }
+    .provider-card { transition: box-shadow .15s, transform .15s; }
+    .provider-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,.1); transform: translateY(-1px); }
+    .rank-1 { border: 2px solid #0284c7; }
+  </style>
+</head>
+<body class="font-sans antialiased min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-white border-b border-gray-100 sticky top-0 z-10">
+    <div class="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-lg bg-sky-600 flex items-center justify-center">
+          <span class="text-white text-xs font-bold">📶</span>
+        </div>
+        <span class="font-bold text-gray-900">Fibrer</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <a href="blog/index.html" class="text-xs text-gray-500 hover:text-gray-900 font-medium">Blog</a>
+        <span class="text-xs text-gray-400">Données mars 2026</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="bg-gradient-to-br from-sky-600 to-sky-800 text-white py-12 px-4">
+    <div class="max-w-2xl mx-auto text-center">
+      <p class="text-sky-200 text-sm font-medium mb-3">Comparateur gratuit · Sans engagement</p>
+      <h1 class="text-3xl sm:text-4xl font-extrabold leading-tight mb-3">
+        Trouvez la meilleure box internet<br />en 30 secondes
+      </h1>
+      <p class="text-sky-100 text-base">
+        Comparez fibre, ADSL et 5G — économisez jusqu'à <strong>240 €/an</strong> sur votre abonnement
+      </p>
+    </div>
+  </section>
+
+  <!-- Configurator -->
+  <section class="py-8 px-4">
+    <div class="max-w-2xl mx-auto">
+      <div class="card p-6">
+        <h2 class="font-bold text-gray-900 text-lg mb-5">Votre situation</h2>
+
+        <!-- Connection type -->
+        <div class="mb-6">
+          <label class="text-sm font-semibold text-gray-700 block mb-3">Type de connexion disponible</label>
+          <div class="flex flex-wrap gap-2">
+            <button onclick="setType('fibre')" id="btn-fibre"
+              class="type-btn px-4 py-2 rounded-xl border-2 border-sky-600 bg-sky-50 text-sky-700 font-semibold text-sm">
+              Fibre optique
+            </button>
+            <button onclick="setType('adsl')" id="btn-adsl"
+              class="type-btn px-4 py-2 rounded-xl border-2 border-gray-200 text-gray-600 font-semibold text-sm">
+              ADSL / VDSL
+            </button>
+          </div>
+          <p class="text-xs text-gray-400 mt-2">Vérifiez votre éligibilité fibre sur le site de votre opérateur</p>
+        </div>
+
+        <!-- Usage -->
+        <div class="mb-6">
+          <label class="text-sm font-semibold text-gray-700 block mb-3">Usage principal</label>
+          <div class="flex flex-wrap gap-2">
+            <button onclick="setUsage('basic')" id="btn-basic"
+              class="usage-btn px-4 py-2 rounded-xl border-2 border-gray-200 text-gray-600 font-semibold text-sm">
+              Basique (mail, navigation)
+            </button>
+            <button onclick="setUsage('streaming')" id="btn-streaming"
+              class="usage-btn px-4 py-2 rounded-xl border-2 border-sky-600 bg-sky-50 text-sky-700 font-semibold text-sm">
+              Streaming &amp; jeux
+            </button>
+            <button onclick="setUsage('pro')" id="btn-pro"
+              class="usage-btn px-4 py-2 rounded-xl border-2 border-gray-200 text-gray-600 font-semibold text-sm">
+              Télétravail intensif
+            </button>
+          </div>
+        </div>
+
+        <!-- Current provider -->
+        <div class="mb-6">
+          <label class="text-sm font-semibold text-gray-700 block mb-2">Votre opérateur actuel</label>
+          <select id="currentProvider" onchange="state.currentProvider=this.value"
+            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500">
+            <option value="">Je ne sais pas / sans abonnement</option>
+            <option value="orange">Orange</option>
+            <option value="sfr">SFR</option>
+            <option value="bouygues">Bouygues Telecom</option>
+            <option value="free">Free</option>
+            <option value="red">RED by SFR</option>
+            <option value="sosh">Sosh</option>
+          </select>
+        </div>
+
+        <button onclick="compare()"
+          class="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-3.5 rounded-xl text-base transition">
+          Comparer les offres →
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Results -->
+  <section id="results" class="hidden px-4 pb-10">
+    <div class="max-w-2xl mx-auto">
+      <h2 class="font-bold text-gray-900 text-xl mb-4" id="results-title">Offres disponibles</h2>
+      <div id="results-list" class="space-y-3"></div>
+
+      <!-- Email alert -->
+      <div class="card mt-6 p-5">
+        <div class="flex items-start gap-4">
+          <div class="w-10 h-10 rounded-xl bg-sky-50 flex items-center justify-center flex-shrink-0">
+            <span class="text-lg">🔔</span>
+          </div>
+          <div class="flex-1">
+            <h3 class="font-bold text-gray-900">Alerte promo gratuite</h3>
+            <p class="text-sm text-gray-600 mt-1">
+              Les opérateurs lancent des promos flash. Recevez un email dès qu'une offre moins chère apparaît.
+            </p>
+            <form id="alertForm" action="https://formsubmit.co/ajax/g.yabas@gmail.com" method="POST" class="mt-3">
+              <input type="hidden" name="connection_type" id="hidden-type" />
+              <input type="hidden" name="usage" id="hidden-usage" />
+              <input type="hidden" name="current_provider" id="hidden-provider" />
+              <div class="flex gap-2">
+                <input type="email" name="email" id="alertEmail" placeholder="votre@email.fr" required
+                  class="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500" />
+                <button type="submit" class="bg-sky-600 hover:bg-sky-700 text-white font-semibold px-4 py-2.5 rounded-xl text-sm transition whitespace-nowrap">
+                  M'alerter
+                </button>
+              </div>
+            </form>
+            <p id="alert-confirm" class="text-xs text-green-600 font-medium mt-2 hidden">✓ Vous serez alerté dès qu'une meilleure offre est disponible !</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Papernest CTA -->
+      <div class="card p-5 mt-3 border border-sky-100 bg-sky-50">
+        <div class="flex items-center justify-between gap-4">
+          <div>
+            <p class="font-semibold text-gray-900 text-sm">Vous voulez qu'on gère le changement pour vous ?</p>
+            <p class="text-xs text-gray-500 mt-0.5">Papernest s'occupe de tout — résiliation, souscription, portage de numéro.</p>
+          </div>
+          <a href="https://www.papernest.com/box-internet/?utm_source=fibrer&utm_medium=comparateur&utm_campaign=mars2026"
+             target="_blank"
+             class="shrink-0 bg-sky-600 hover:bg-sky-700 text-white font-semibold text-sm px-4 py-2.5 rounded-xl transition whitespace-nowrap">
+            Changer via Papernest →
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trust bar -->
+  <section class="py-8 px-4 border-t border-gray-100">
+    <div class="max-w-2xl mx-auto grid grid-cols-3 gap-4 text-center">
+      <div>
+        <div class="text-2xl font-extrabold text-gray-900">6</div>
+        <div class="text-xs text-gray-500 mt-0.5">Opérateurs comparés</div>
+      </div>
+      <div>
+        <div class="text-2xl font-extrabold text-gray-900">€240</div>
+        <div class="text-xs text-gray-500 mt-0.5">Économie max/an</div>
+      </div>
+      <div>
+        <div class="text-2xl font-extrabold text-gray-900">100%</div>
+        <div class="text-xs text-gray-500 mt-0.5">Gratuit & indépendant</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="text-center text-xs text-gray-400 py-8 border-t border-gray-100">
+    © 2026 Fibrer · Comparateur indépendant · Tarifs indicatifs mars 2026, vérifiez sur le site de chaque opérateur
+    <br /><a href="blog/index.html" class="hover:text-gray-600 mt-1 inline-block">Blog</a>
+  </footer>
+
+<script>
+const state = {
+  type: 'fibre',
+  usage: 'streaming',
+  currentProvider: ''
+};
+
+// Providers data — prices indicative March 2026, no commitment (or post-promo price shown)
+const providers = {
+  fibre: [
+    {
+      id: 'red',
+      name: 'RED by SFR',
+      offer: 'RED Box Fibre',
+      price: 22.99,
+      speed_dl: 500,
+      speed_ul: 500,
+      commitment: 'Sans engagement',
+      tv: false,
+      phone: true,
+      promo: null,
+      best_for: ['basic', 'streaming'],
+      url: 'https://www.red-by-sfr.fr/box-internet/?utm_source=fibrer&utm_medium=comparateur&utm_campaign=mars2026'
+    },
+    {
+      id: 'sosh',
+      name: 'Sosh',
+      offer: 'Box Sosh Fibre',
+      price: 24.99,
+      speed_dl: 500,
+      speed_ul: 500,
+      commitment: 'Sans engagement',
+      tv: false,
+      phone: true,
+      promo: null,
+      best_for: ['basic', 'streaming'],
+      url: 'https://www.sosh.fr/offres-internet/box-fibre?utm_source=fibrer&utm_medium=comparateur&utm_campaign=mars2026'
+    },
+    {
+      id: 'bouygues',
+      name: 'Bouygues Telecom',
+      offer: 'Bbox Must Fibre',
+      price: 26.99,
+      speed_dl: 1000,
+      speed_ul: 700,
+      commitment: '12 mois',
+      tv: true,
+      phone: true,
+      promo: 15.99,
+      best_for: ['streaming', 'pro'],
+      url: 'https://www.bouyguestelecom.fr/offres-internet/bbox-must?utm_source=fibrer&utm_medium=comparateur&utm_campaign=mars2026'
+    },
+    {
+      id: 'free',
+      name: 'Free',
+      offer: 'Freebox Pop',
+      price: 29.99,
+      speed_dl: 5000,
+      speed_ul: 700,
+      commitment: 'Sans engagement',
+      tv: true,
+      phone: true,
+      promo: null,
+      best_for: ['streaming', 'pro'],
+      url: 'https://www.free.fr/freebox/freebox-pop/?utm_source=fibrer&utm_medium=comparateur&utm_campaign=mars2026'
+    },
+    {
+      id: 'orange',
+      name: 'Orange',
+      offer: 'Livebox Up Fibre',
+      price: 34.99,
+      speed_dl: 2000,
+      speed_ul: 900,
+      commitment: '12 mois',
+      tv: true,
+      phone: true,
+      promo: 24.99,
+      best_for: ['streaming', 'pro'],
+      url: 'https://boutique.orange.fr/offres/internet/livebox-up?utm_source=fibrer&utm_medium=comparateur&utm_campaign=mars2026'
+    },
+    {
+      id: 'sfr',
+      name: 'SFR',
+      offer: 'Box SFR Fibre Starter',
+      price: 36.99,
+      speed_dl: 500,
+      speed_ul: 500,
+      commitment: '12 mois',
+      tv: true,
+      phone: true,
+      promo: 22.99,
+      best_for: ['basic', 'streaming'],
+      url: 'https://www.sfr.fr/offre-internet/?utm_source=fibrer&utm_medium=comparateur&utm_campaign=mars2026'
+    }
+  ],
+  adsl: [
+    {
+      id: 'red-adsl',
+      name: 'RED by SFR',
+      offer: 'RED Box ADSL',
+      price: 18.99,
+      speed_dl: 20,
+      speed_ul: 1,
+      commitment: 'Sans engagement',
+      tv: false,
+      phone: true,
+      promo: null,
+      best_for: ['basic', 'streaming'],
+      url: 'https://www.red-by-sfr.fr/box-internet/?utm_source=fibrer&utm_medium=comparateur&utm_campaign=mars2026'
+    },
+    {
+      id: 'sosh-adsl',
+      name: 'Sosh',
+      offer: 'Box Sosh ADSL',
+      price: 19.99,
+      speed_dl: 20,
+      speed_ul: 1,
+      commitment: 'Sans engagement',
+      tv: false,
+      phone: true,
+      promo: null,
+      best_for: ['basic'],
+      url: 'https://www.sosh.fr/offres-internet/box-adsl?utm_source=fibrer&utm_medium=comparateur&utm_campaign=mars2026'
+    },
+    {
+      id: 'bouygues-adsl',
+      name: 'Bouygues Telecom',
+      offer: 'Bbox Fit ADSL',
+      price: 22.99,
+      speed_dl: 20,
+      speed_ul: 1,
+      commitment: '12 mois',
+      tv: false,
+      phone: true,
+      promo: 14.99,
+      best_for: ['basic', 'streaming'],
+      url: 'https://www.bouyguestelecom.fr/offres-internet/bbox-fit?utm_source=fibrer&utm_medium=comparateur&utm_campaign=mars2026'
+    },
+    {
+      id: 'orange-adsl',
+      name: 'Orange',
+      offer: 'Livebox Essentielle ADSL',
+      price: 29.99,
+      speed_dl: 20,
+      speed_ul: 1,
+      commitment: '12 mois',
+      tv: false,
+      phone: true,
+      promo: 19.99,
+      best_for: ['basic', 'streaming'],
+      url: 'https://boutique.orange.fr/offres/internet/livebox?utm_source=fibrer&utm_medium=comparateur&utm_campaign=mars2026'
+    }
+  ]
+};
+
+function setType(t) {
+  state.type = t;
+  document.querySelectorAll('.type-btn').forEach(b => {
+    b.classList.remove('border-sky-600', 'bg-sky-50', 'text-sky-700');
+    b.classList.add('border-gray-200', 'text-gray-600');
+  });
+  const btn = document.getElementById('btn-' + t);
+  btn.classList.remove('border-gray-200', 'text-gray-600');
+  btn.classList.add('border-sky-600', 'bg-sky-50', 'text-sky-700');
+}
+
+function setUsage(u) {
+  state.usage = u;
+  document.querySelectorAll('.usage-btn').forEach(b => {
+    b.classList.remove('border-sky-600', 'bg-sky-50', 'text-sky-700');
+    b.classList.add('border-gray-200', 'text-gray-600');
+  });
+  const btn = document.getElementById('btn-' + u);
+  btn.classList.remove('border-gray-200', 'text-gray-600');
+  btn.classList.add('border-sky-600', 'bg-sky-50', 'text-sky-700');
+}
+
+function compare() {
+  const list = providers[state.type] || providers.fibre;
+  const sorted = [...list].sort((a, b) => a.price - b.price);
+  const cheapest = sorted[0].price;
+  const currentP = sorted.find(p => p.id === state.currentProvider || p.id === state.currentProvider + '-adsl');
+
+  document.getElementById('results-title').textContent =
+    `${sorted.length} offres ${state.type === 'fibre' ? 'fibre' : 'ADSL'} disponibles — du moins cher au plus cher`;
+
+  const listEl = document.getElementById('results-list');
+  listEl.innerHTML = '';
+
+  sorted.forEach((p, i) => {
+    const isCurrent = p.id === state.currentProvider || p.id === state.currentProvider + '-adsl';
+    const saving = isCurrent ? null : (currentP ? Math.round((currentP.price - p.price) * 12) : null);
+    const isRecommended = i === 0;
+
+    const savingHtml = saving && saving > 0
+      ? `<span class="saving-blue font-semibold text-sm">−${saving} €/an vs votre offre</span>`
+      : saving && saving < 0
+        ? `<span class="text-gray-400 text-sm">+${Math.abs(saving)} €/an vs votre offre</span>`
+        : '';
+
+    const card = document.createElement('div');
+    card.className = `card provider-card p-4 flex items-center justify-between gap-4 ${isRecommended ? 'rank-1' : ''}`;
+    card.innerHTML = `
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="font-bold text-gray-900">${p.name}</span>
+          ${isRecommended ? '<span class="best-badge text-white text-xs font-bold px-2.5 py-0.5 rounded-full">Moins cher</span>' : ''}
+          ${isCurrent ? '<span class="bg-gray-100 text-gray-500 text-xs font-medium px-2 py-0.5 rounded-full">Votre offre actuelle</span>' : ''}
+        </div>
+        <div class="text-xs text-gray-500 mt-0.5">${p.offer} · ${p.commitment}${p.tv ? ' · TV incluse' : ''}${p.phone ? ' · Appels illimités' : ''}</div>
+        <div class="mt-2 flex items-center gap-4 flex-wrap">
+          <div>
+            <span class="text-2xl font-extrabold text-gray-900">${p.price.toFixed(2)} €</span>
+            <span class="text-gray-400 text-sm">/mois</span>
+          </div>
+          ${p.promo ? `<span class="text-xs text-amber-600 font-semibold">Promo ${p.promo.toFixed(2)} €/mo les 12 premiers mois</span>` : ''}
+          ${savingHtml}
+        </div>
+        <div class="text-xs text-gray-400 mt-1">↓ ${p.speed_dl >= 1000 ? (p.speed_dl/1000).toFixed(0) + ' Gb/s' : p.speed_dl + ' Mb/s'} · ↑ ${p.speed_ul >= 1000 ? (p.speed_ul/1000).toFixed(0) + ' Gb/s' : p.speed_ul + ' Mb/s'}</div>
+      </div>
+      ${!isCurrent ? `
+      <a href="${p.url}" target="_blank" onclick="trackSwitch('${p.id}')"
+        class="shrink-0 bg-sky-600 hover:bg-sky-700 text-white font-semibold text-sm px-4 py-2 rounded-xl transition whitespace-nowrap">
+        Souscrire
+      </a>` : ''}
+    `;
+    listEl.appendChild(card);
+  });
+
+  const el = document.getElementById('results');
+  el.classList.remove('hidden');
+  el.classList.add('fade-in');
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function trackSwitch(providerId) {
+  console.log('[fibrer] Switch intent:', providerId, state);
+}
+
+// Form submit handler
+document.getElementById('alertForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  document.getElementById('hidden-type').value = state.type;
+  document.getElementById('hidden-usage').value = state.usage;
+  document.getElementById('hidden-provider').value = state.currentProvider;
+  const btn = this.querySelector('button[type=submit]');
+  btn.disabled = true;
+  btn.textContent = '...';
+  try {
+    const data = new FormData(this);
+    data.append('_subject', 'Nouvelle alerte box internet — Fibrer');
+    data.append('_captcha', 'false');
+    const res = await fetch(this.action, { method: 'POST', body: data, headers: { Accept: 'application/json' } });
+    if (res.ok) {
+      document.getElementById('alert-confirm').classList.remove('hidden');
+      this.reset();
+    } else {
+      btn.textContent = 'Erreur';
+      btn.disabled = false;
+    }
+  } catch (_) {
+    btn.textContent = 'Erreur';
+    btn.disabled = false;
+  }
+});
+</script>
+</body>
+</html>

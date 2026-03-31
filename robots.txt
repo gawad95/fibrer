@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://gawad95.github.io/fibrer/sitemap.xml
